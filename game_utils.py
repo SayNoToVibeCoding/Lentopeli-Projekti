@@ -14,9 +14,9 @@ def get_connection():
         return connection
     except Error as e:
         if "Authentication plugin" in str(e):
-            print("❌ Authentication plugin error detected!")
+            print("Authentication plugin error detected!")
             print("Your MySQL user is configured with an unsupported authentication method.")
-            print("\n🔧 Quick Fix - Run this SQL command in MySQL:")
+            print("\n Quick Fix - Run this SQL command in MySQL:")
             print("ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'roni1234';")
             print("FLUSH PRIVILEGES;")
         raise
@@ -41,10 +41,10 @@ def save_game(player_name, level, fuel, resources, current_planet_id):
 
         cursor.execute(sql, (player_name, level, fuel, resources, current_planet_id))
         conn.commit()
-        print("✅ Game saved successfully!")
+        print("Game saved successfully!")
 
     except Error as e:
-        print(f"❌ Error saving game: {e}")
+        print(f" Error saving game: {e}")
         if conn:
             conn.rollback()
     finally:
@@ -67,14 +67,14 @@ def load_game(player_name):
         player_data = cursor.fetchone()
 
         if player_data:
-            print(f"✅ Welcome back, {player_name}!")
+            print(f" Welcome back, {player_name}!")
             return player_data
         else:
-            print("📝 No save file found for this player. Starting a new game!")
+            print(" No save file found for this player. Starting a new game!")
             return None
 
     except Error as e:
-        print(f"❌ Error loading game: {e}")
+        print(f" Error loading game: {e}")
         return None
     finally:
         if cursor:
@@ -103,4 +103,5 @@ def delete_game(player_name):
             cursor.close()
         if conn:
             conn.close()
+
 
