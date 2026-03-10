@@ -175,6 +175,9 @@ class SpaceGame:
         if save_file:
             self.fuel = save_file['fuel']
             self.round = save_file['level']
+            self.resources['Water'] = save_file.get('water', 0)
+            self.resources['Food'] = save_file.get('food', 0)
+            self.resources['Technology'] = save_file.get('technology', 0)
         else:
             self.create_game()
 
@@ -193,7 +196,7 @@ class SpaceGame:
                 print("GAME OVER - Not enough fuel to reach any planet")
                 print(f"You explored {self.round} rounds.")
                 print("=" * 70)
-                save_game(self.player_name, self.round, self.fuel, sum(self.resources.values()), 1)
+                save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
                 break
 
             self.show_round_info(affordable_planets)
@@ -219,7 +222,7 @@ class SpaceGame:
                 print("GAME OVER - Out of fuel")
                 print(f"You explored {self.round} rounds before running out of fuel.")
                 print("=" * 70)
-                save_game(self.player_name, self.round, self.fuel, sum(self.resources.values()), 1)
+                save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], selected["ident"])
                 delete_game(self.player_name)
                 break
 
@@ -229,11 +232,11 @@ class SpaceGame:
                 print("You found a suitable planet for humanity to colonize.")
                 print(f"Water: {self.resources['Water']} | Food: {self.resources['Food']} | Tech: {self.resources['Technology']}")
                 print("=" * 70)
-                save_game(self.player_name, self.round, self.fuel, sum(self.resources.values()), 1)
+                save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
                 delete_game(self.player_name)
                 break
 
-            save_game(self.player_name, self.round, self.fuel, sum(self.resources.values()), 1)
+            save_game(self.player_name, self.round, self.fuel, self.resources["Water"], self.resources["Food"], self.resources["Technology"], 1)
 
             self.round += 1
             input("\nPress Enter for next round...")
@@ -256,4 +259,3 @@ if __name__ == "__main__":
         print("\nQuitting...")
     except Exception as e:
         print(f"Error: {e}")
-
