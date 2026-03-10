@@ -14,7 +14,7 @@ def get_connection():
         return connection
     except Error as e:
         if "Authentication plugin" in str(e):
-            print("Authentication plugin error detected!")
+            print(" Authentication plugin error detected!")
             print("Your MySQL user is configured with an unsupported authentication method.")
             print("\n Quick Fix - Run this SQL command in MySQL:")
             print("ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'roni1234';")
@@ -22,7 +22,7 @@ def get_connection():
         raise
 
 
-def save_game(player_name, level, fuel, resources, current_planet_id):
+def save_game(player_name, level, fuel, water, food, technology,  current_planet_id):
     conn = None
     cursor = None
     try:
@@ -30,18 +30,20 @@ def save_game(player_name, level, fuel, resources, current_planet_id):
         cursor = conn.cursor()
 
         sql = """
-        INSERT INTO Player (name, level, fuel, resources, current_planet_id)
-        VALUES (%s, %s, %s, %s, %s) 
+        INSERT INTO Player (name, level, fuel, food, water, technology, current_planet_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s) 
         ON DUPLICATE KEY UPDATE
             level = VALUES(level), 
             fuel = VALUES(fuel), 
-            resources = VALUES(resources), 
+            water = VALUES(water),
+            food = VALUES(food),
+            technology = VALUES(technology), 
             current_planet_id = VALUES(current_planet_id)
         """
 
-        cursor.execute(sql, (player_name, level, fuel, resources, current_planet_id))
+        cursor.execute(sql, (player_name, level, fuel, water, food, technology, current_planet_id))
         conn.commit()
-        print("Game saved successfully!")
+        print(" Game saved successfully!")
 
     except Error as e:
         print(f" Error saving game: {e}")
@@ -61,7 +63,7 @@ def load_game(player_name):
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
 
-        sql = "SELECT level, fuel, resources, current_planet_id FROM Player WHERE name = %s"
+        sql = "SELECT level, fuel, water, food, technology, current_planet_id FROM Player WHERE name = %s"
         cursor.execute(sql, (player_name,))
 
         player_data = cursor.fetchone()
@@ -103,5 +105,3 @@ def delete_game(player_name):
             cursor.close()
         if conn:
             conn.close()
-
-
