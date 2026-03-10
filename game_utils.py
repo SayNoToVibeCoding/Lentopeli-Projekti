@@ -3,7 +3,6 @@ from mysql.connector import Error
 
 
 def get_connection():
-    #Connect to database
     try:
         connection = mysql.connector.connect(
             host="127.0.0.1",
@@ -24,7 +23,6 @@ def get_connection():
 
 
 def save_game(player_name, level, fuel, resources, current_planet_id):
-    #Save game progress
     conn = None
     cursor = None
     try:
@@ -57,7 +55,6 @@ def save_game(player_name, level, fuel, resources, current_planet_id):
 
 
 def load_game(player_name):
-    #Load game progress
     conn = None
     cursor = None
     try:
@@ -86,7 +83,6 @@ def load_game(player_name):
             conn.close()
 
 def delete_game(player_name):
-    #Delete completed
     conn = None
     cursor = None
     try:
@@ -107,3 +103,4 @@ def delete_game(player_name):
             cursor.close()
         if conn:
             conn.close()
+
