@@ -6,7 +6,6 @@ from game_utils import save_game, load_game, delete_game
 
 class SpaceGame:
     def __init__(self, db_config):
-        #Mysql connection
         try:
             db_config['auth_plugin'] = 'mysql_native_password'
             self.db = mysql.connector.connect(**db_config)
@@ -26,7 +25,6 @@ class SpaceGame:
             raise
 
     def create_game(self):
-        #New game
         try:
             query = """
                     INSERT INTO game (co2_consumed, co2_budget, screen_name, location)
@@ -36,7 +34,6 @@ class SpaceGame:
             self.db.commit()
             self.game_id = self.cursor.lastrowid
 
-            # Resources
             for resource_name in ['Water', 'Food', 'Technology']:
                 self.cursor.execute("SELECT id FROM resource WHERE name = %s", (resource_name,))
                 result = self.cursor.fetchone()
@@ -56,7 +53,6 @@ class SpaceGame:
             self.db.rollback()
 
     def get_planets(self):
-        #Randomize planets
         try:
             query = "SELECT ident, name, elevation_ft FROM airport ORDER BY RAND() LIMIT 5"
             self.cursor.execute(query)
@@ -66,7 +62,6 @@ class SpaceGame:
             return []
 
     def prepare_planets(self, planets):
-        #Randomize planet data
         prepared = []
 
         for planet in planets:
@@ -85,7 +80,6 @@ class SpaceGame:
         return prepared
 
     def show_round_info(self, planets):
-        #Display player data and destinations
         print("\n" + "=" * 70)
         print(f"ROUND {self.round}")
         print("=" * 70)
@@ -107,7 +101,6 @@ class SpaceGame:
         print("\n" + "-" * 70)
 
     def random_event(self):
-        #Roll event
         roll = random.randint(1, 6)
         print(f"\nDice roll: {roll}")
 
@@ -136,7 +129,6 @@ class SpaceGame:
         return roll
 
     def travel_to(self, planet):
-        #Travel to planet
         cost = planet['fuel_cost']
 
         print(f"\nTraveling to {planet['name'].upper()}...")
@@ -163,7 +155,6 @@ class SpaceGame:
         return True
 
     def check_victory(self):
-        #Check WinCon
         has_water = self.resources['Water'] >= 10
         has_food = self.resources['Food'] >= 10
         has_tech = self.resources['Technology'] >= 10
@@ -172,7 +163,6 @@ class SpaceGame:
         return has_water and has_food and has_tech and enough_planets
 
     def run(self):
-        #DA LOOP
         print("\n" + "=" * 70)
         print("SPACE EXPLORATION GAME")
         print("=" * 70)
@@ -181,7 +171,6 @@ class SpaceGame:
 
         self.player_name = input("Enter your pilot name: ")
 
-        # Try to load existing save
         save_file = load_game(self.player_name)
         if save_file:
             self.fuel = save_file['fuel']
@@ -189,7 +178,6 @@ class SpaceGame:
         else:
             self.create_game()
 
-        # Game loop
         while True:
             planets = self.get_planets()
             if not planets:
@@ -198,7 +186,6 @@ class SpaceGame:
 
             planets_data = self.prepare_planets(planets)
 
-            # Filter planets based fuel
             affordable_planets = [p for p in planets_data if p['fuel_cost'] <= self.fuel]
 
             if not affordable_planets:
@@ -211,7 +198,6 @@ class SpaceGame:
 
             self.show_round_info(affordable_planets)
 
-            # Get player choice
             while True:
                 try:
                     choice = int(input(f"Choose planet (1-{len(affordable_planets)}): "))
@@ -223,13 +209,11 @@ class SpaceGame:
 
             selected = affordable_planets[choice - 1]
 
-            # Try to travel
             if not self.travel_to(selected):
                 continue
 
             self.random_event()
 
-            # Check if out of fuel after event
             if self.fuel <= 0:
                 print("\n" + "=" * 70)
                 print("GAME OVER - Out of fuel")
@@ -239,7 +223,6 @@ class SpaceGame:
                 delete_game(self.player_name)
                 break
 
-            # Check wincon
             if self.check_victory():
                 print("\n" + "=" * 70)
                 print("SUCCESS!")
@@ -273,3 +256,4 @@ if __name__ == "__main__":
         print("\nQuitting...")
     except Exception as e:
         print(f"Error: {e}")
+
