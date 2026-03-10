@@ -92,7 +92,7 @@ class SpaceGame:
 
         for i, planet in enumerate(planets, 1):
             print(f"\n{i}. {planet['name'].upper()} (ID: {planet['ident']})")
-            print(f"   Elevation: {planet['elevation']} ft")
+            #print(f"   Elevation: {planet['elevation']} ft")
             print(f"   Fuel needed: {planet['fuel_cost']}%")
 
             water, food, tech = planet['rewards']['Water'], planet['rewards']['Food'], planet['rewards']['Technology']
@@ -259,3 +259,4 @@ if __name__ == "__main__":
         print("\nQuitting...")
     except Exception as e:
         print(f"Error: {e}")
+
